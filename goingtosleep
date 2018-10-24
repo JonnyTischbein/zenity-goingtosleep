@@ -1,0 +1,45 @@
+#!/bin/bash
+TIME=`zenity --scale --text="Time to go to sleep in" --value=20 --min-value=1 --max-value=120 --step=5 --title="GoingToSleep" --cancel-label="Quit"`
+if [ -z $TIME ]; then
+	echo "failed to get time"
+	exit 1
+fi
+TIME=$(($TIME * 60))
+
+SECONDS=0
+while [ $SECONDS -lt $TIME ]; do
+	#echo "wait since $(($SECONDS % 60)) / $TIME"
+	#SLEEP=$(( TIME / 5 ))
+	#echo "sleep for $SLEEP"
+	#sleep $SLEEP
+	echo $(( $SECONDS * 100 / $TIME ))
+	sleep 1
+	HRS=$(( ($TIME - $SECONDS) / (60 * 60) ))
+	MINS=$(( (($TIME - $SECONDS) / 60) % 60  ))
+	SECS=$(( ($TIME - $SECONDS) % 60 ))
+	if [ $HRS -eq "0" ]; then
+		HRS=""
+	else
+		HRS+="h "
+	fi
+	if [ $MINS -eq "0" ]; then
+		MINS=""
+	else
+		MINS+="m "
+	fi
+	if [ $SECS -eq "0" ]; then
+		SECS=""
+	else
+		SECS+="s "
+	fi
+	echo "# Remaining time: $HRS$MINS$SECS"
+done | `zenity --progress  --ok-label="Sleep" --cancel-label="Abort" --auto-close --title="GoingToSleep"`
+
+if [ $? -eq 1 ]; then
+	echo "Abort hibernate"
+	`zenity --info --text="Going to sleep has been aborted. Bye" --title="GoingToSleep - Exit" --ok-label="Quit" --width=300`
+	exit 1
+else
+	echo "Doooooooo MAAAAGIC!"
+	systemctl hibernate
+fi

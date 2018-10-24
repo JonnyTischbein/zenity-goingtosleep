@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Going To Sleep
+Comment=Timer Tool to set system in sleep after countdown
+Exec=goingtosleep
+Terminal=false
+Type=Application
+Categories=Utility;Development;
+
